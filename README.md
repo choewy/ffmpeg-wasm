@@ -1,6 +1,7 @@
 # Heroku Express & React
 
-- Hearoku를 사용한 Express & React 배포 자동화
+- Hearoku를 사용한 Express & React 배포 자동화 테스트
+- https://heroku-express-react-app.herokuapp.com/
 
 ## client
 
