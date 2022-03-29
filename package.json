@@ -1,0 +1,13 @@
+{
+  "name": "heroku-express-react",
+  "version": "1.0.0",
+  "description": "- Hearoku를 사용한 Express & React 배포 자동화",
+  "main": "index.js",
+  "scripts": {
+    "heroku-prebuild": "cd client && npm ci && npm run build && mv build ../server",
+    "start": "cd server && npm ci && tsc && node main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
