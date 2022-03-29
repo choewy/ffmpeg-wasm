@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { connect } from "socket.io-client";
 
 const WSS_URL = process.env.NODE_ENV === 'production' 
-  ? `http://${window.location.host}`
+  ? `https://${window.location.host}`
   : "http://localhost:5000";
 
 const socket = connect(WSS_URL);
