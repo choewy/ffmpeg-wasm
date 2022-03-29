@@ -40,9 +40,12 @@ const app = express();
 app.use(cors({origin: "*", credentials: true}));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.get('/', (req, res)=>{
-    res.json(appData);
-});
+
+if (NODE_ENV !== "production") {
+    app.get('/', (req, res)=>{
+        res.json(appData);
+    });
+};
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -62,7 +65,7 @@ io.on("connection", (socket: any) => {
             datetime: new Date()
         };
         appData.messages.push(message);
-        
+
         const loadPayload = {
             count: appData.sockets.length, 
             messages: appData.messages
