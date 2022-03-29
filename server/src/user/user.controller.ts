@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CookieConfig } from "../configs";
 import { UserDoc, UserBody, UserSign } from "./user.entities";
-import { User } from "./user.model";
+import { UserService } from "./user.service";
 
 const {tokenKey, tokenExp} = CookieConfig()
 
@@ -18,7 +18,7 @@ class Controller {
     signUp = async (req: Request, res: Response) => {
         const doc: UserDoc = req.body;
         try {
-            const user: UserSign = await User.signUpUser(doc);
+            const user: UserSign = await UserService.signUpUser(doc);
             res.cookie(tokenExp, user.tokenExp);
             res.cookie(tokenKey, user.token);
             return res.status(200).json({ok: true});
@@ -31,7 +31,7 @@ class Controller {
     signIn = async (req: Request, res: Response) => {
         const body: UserBody = req.body;
         try {
-            const user: UserSign = await User.signInUser(body);
+            const user: UserSign = await UserService.signInUser(body);
             res.cookie(tokenExp, user.tokenExp);
             res.cookie(tokenKey, user.token);
             return res.status(200).json({ok: true});
@@ -45,7 +45,7 @@ class Controller {
         try {
             const user = req.user;
             const _id = user ? user._id : '';
-            User.signOutUser(_id);
+            UserService.signOutUser(_id);
             return res.status(200).json({ok: true});
         } catch (error:any) {
             const {message} = error;

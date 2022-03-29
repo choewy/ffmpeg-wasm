@@ -23,7 +23,7 @@ interface MessageDoc {
 };
 
 // 아직 미구현
-export class ChatModel {
+class Service {
     constructor(
         private dataPath: string = FileConfig('chat.data.json'),
         private incPath: string = FileConfig('chat.inc.json')
@@ -95,3 +95,5 @@ export class ChatModel {
         };
     };
 };
+
+export const ChatService = new Service()

@@ -1,15 +1,11 @@
 import express from 'express';
-import {Server } from 'socket.io';
+import {Server, Socket } from 'socket.io';
 import http from 'http';
 import { AppMiddleware } from './app/app.middleware';
 import { AppRoutes } from './app/app.routes';
 import { AppConfig } from './configs';
 
-export interface App {
-    use: Function,
-    get: Function,
-};
-
+// --- 나중에 지울 것들 ---
 interface AppData {
     sockets: {
         id: string, 
@@ -36,6 +32,7 @@ const appData: AppData = {
     sockets: [],
     messages: []
 };
+// ------- 여기까지 --------
 
 const {mode, port} = AppConfig();
 const app = express();
@@ -44,11 +41,13 @@ AppMiddleware(app);
 AppRoutes(app, mode);
 
 const httpServer = http.createServer(app);
+
+// --- 나중에 지울 것들 ---
 const io = new Server(httpServer, {
     cors: {origin: "*", credentials: true}
 });
 
-io.on("connection", (socket: any) => {
+io.on("connection", (socket: Socket) => {
     socket.on('join', (name: string, callback: Function) => {
         const {id} = socket;
         appData.sockets.push({id, name});
@@ -109,6 +108,7 @@ io.on("connection", (socket: any) => {
         };
     });
 });
+// ----- 여기까지 -----
 
 httpServer.listen(port, () => {
     console.log('server ruuning');

@@ -7,7 +7,7 @@ import fs from 'fs';
 
 const {jwtSecret, saltRounds} = AuthConfig();
 
-class Model {
+class Service {
     constructor(
         private dataPath: string = FileConfig('user.data.json'),
         private incPath: string = FileConfig('user.inc.json'),
@@ -69,13 +69,10 @@ class Model {
     signUpUser = async (
         doc: UserDoc
     ): Promise<UserSign> => {
-        
         const {email, password} = doc;
-
         if (this.duplicated(email)) {
             throw UserErrors.duplicateError;
         };
-        
         const _id: string = this.inc();
         const salt = await bcrypt.genSalt(saltRounds);
         doc.password = await bcrypt.hash(password, salt);
@@ -105,12 +102,10 @@ class Model {
     };
 
     signOutUser = (_id: string) => {
-        console.log(_id);
         const user = this.userById(_id);
         user.token = "";
         user.tokenExp = 0;
         this.users = this.users.map(db_user => db_user._id === _id ? user : db_user);
-        console.log(user);
         try {
             fs.writeFileSync(this.dataPath, JSON.stringify(this.users), {encoding: 'utf-8'});
         } catch {
@@ -133,4 +128,4 @@ class Model {
     };
 };
 
-export const User = new Model();
+export const UserService = new Service();
