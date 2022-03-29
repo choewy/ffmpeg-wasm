@@ -1,8 +1,14 @@
-
 import express from 'express';
-import cors from 'cors';
 import {Server } from 'socket.io';
 import http from 'http';
+import { AppMiddleware } from './app/app.middleware';
+import { AppRoutes } from './app/app.routes';
+import { AppConfig } from './configs';
+
+export interface App {
+    use: Function,
+    get: Function,
+};
 
 interface AppData {
     sockets: {
@@ -16,7 +22,7 @@ interface AppData {
         text: string,
         datetime: Date
     }[],
-}
+};
 
 interface SendPayload {
     type: string,
@@ -24,28 +30,18 @@ interface SendPayload {
     name: string,
     enter: boolean,
     text: string
-}
+};
 
 const appData: AppData = {
     sockets: [],
     messages: []
 };
 
-const NODE_ENV = process.env.NODE_ENV;
-const PORT = NODE_ENV === "production" 
-    ? process.env.PORT || 3000 
-    : 5000;
-
+const {mode, port} = AppConfig();
 const app = express();
-app.use(cors({origin: "*", credentials: true}));
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
 
-if (NODE_ENV !== "production") {
-    app.get('/', (req, res)=>{
-        res.json(appData);
-    });
-};
+AppMiddleware(app);
+AppRoutes(app, mode);
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -114,13 +110,6 @@ io.on("connection", (socket: any) => {
     });
 });
 
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static('build'))
-    app.get('*', (req, res)=>{
-        res.sendFile(__dirname + '/build/index.html');
-    });
-};
-
-httpServer.listen(PORT, () => {
+httpServer.listen(port, () => {
     console.log('server ruuning');
 });
