@@ -6,7 +6,7 @@
   "scripts": {
     "client-build": "cd client && npm ci && npm run build && cd ../",
     "server-build": "cd server && npm ci --dev && npm run build && cd ../",
-    "heroku-prebuild": "npm run client-build && npm run server-build ** mv ./client/build ./server/dist/build",
+    "heroku-prebuild": "npm run client-build && npm run server-build && mv ./client/build ./server/dist/build",
     "start": "cd server && npm run start"
   },
   "keywords": [],
