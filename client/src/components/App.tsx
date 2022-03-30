@@ -1,160 +1,50 @@
-import { useEffect, useState } from "react";
-import { connect } from "socket.io-client";
-
-const WSS_URL = process.env.NODE_ENV === 'production' 
-  ? `https://${window.location.host}`
-  : "http://localhost:5000";
-
-const socket = connect(WSS_URL);
-
-interface InputEvent {
-  target: {
-    name: string,
-    value: string
-  }
-};
-
-interface SubmitEvent {
-  preventDefault: Function
-};
-
-interface Message {
-  type: string,
-  name: string,
-  text: string,
-  datetime: Date
-};
-
-interface NoticePayload {
-  count: number,
-  message: Message
-};
-
-interface LoadPayload {
-  count: number,
-  messages: Message[]
-};
-
-interface PushPayload {
-  message: Message
-};
-
-interface CurrentRoom {
-  count: number,
-  messages: Message[]
-};
-
-const ininCurrentRoom: CurrentRoom = {
-  count: 0,
-  messages: []
-}
+import { Suspense, useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { userAuthAction } from "../actions/user.actions";
+import AuthRoute from "./commons/AuthRoute";
+import Navbar from "./commons/Navbar";
+import ChatPage from "./pages/ChatPage";
+import LandingPage from "./pages/LandingPage";
+import SigninPage from "./pages/SigninPage";
+import SignupPage from "./pages/SignupPage";
 
 const App = () => {
-  const [currentRoom, setCurrentRoom] = useState({
-    ...ininCurrentRoom
+  const [appstate, setAppState] = useState({
+    user: {
+      auth: null,
+      name: '',
+      email: '',
+      role: false
+    }
   });
 
-  const [state, setState] = useState({
-    id: '',
-    name: '',
-    enter: false
-  });
-
-  const [text, setText] = useState('');
-  
   useEffect(() => {
-    const callback = (payload: NoticePayload) => {
-      const {count, message} = payload;
-      const {messages} = currentRoom;
-      setCurrentRoom({count, messages: [...messages, message]});
+    const userAuthCheck = async () => {
+      const user = await userAuthAction();
+      setAppState({...appstate, user});
     };
-    socket.on('notice', callback);
+    userAuthCheck();
+    return () => {};
+}, [appstate]);
 
-    return () => {
-      socket.off('notice', callback);
-    };
-  }, [currentRoom]);
-
-  useEffect(() => {
-    const callback = (payload: PushPayload) => {
-      const {message} = payload;
-      const {messages} = currentRoom;
-      console.log(message);
-      setCurrentRoom({...currentRoom, messages: [...messages, message]});
-    };
-    socket.on('push', callback);
-
-    return () => {
-      socket.off('push', callback);
-    };
-  }, [currentRoom]);
-  
-  const nameChangeHandler = (e: InputEvent) => {
-    const {target: {name, value}} = e;
-    setState({...state, [name]: value});
-  };
-
-  const nameSubmitHandler = (e: SubmitEvent) => {
-    e.preventDefault();
-    socket.emit('join', state.name, (payload: LoadPayload) => {
-      setState({...state, id: socket.id, enter: true});
-      setCurrentRoom({...payload});
-    });
-  };
-
-  const textChangeHandler = (e: InputEvent) => {
-    const {target: {value}} = e;
-    setText(value);
-  };
-
-  const textSubmitHandler = (e: SubmitEvent) => {
-    e.preventDefault();
-
-    socket.emit('send', {...state, text}, (message: Message) => {
-      const {messages} = currentRoom;
-      setCurrentRoom({...currentRoom, messages: [...messages, message] });
-      setText('');
-    });
-  };
+  if (appstate.user.auth === null) return <></>
 
   return (
-    <div>
-      WelCome!
-      {
-        !state.enter 
-        ? (
-          <form onSubmit={nameSubmitHandler}>
-        <input 
-          name="name" 
-          value={state.name} 
-          onChange={nameChangeHandler}
-          placeholder="이름을 입력하세요." />
-          <input type="submit" value="완료"/>
-      </form>
-        ) : (<>
-          <div>
-            <div>현재 접속 중 : {currentRoom.count}명</div>
-            {
-              currentRoom.messages.map((message, index) => {
-                const {type, name, text, datetime} = message;
-                return <p key={index}>
-                  {type === "notice" 
-                    ? text 
-                    : `${name}(${datetime}) : ${text}`}
-                    </p>
-              })
-            }
-          </div>
-          <form onSubmit={textSubmitHandler}>
-            {state.name} : <input
-              value={text} 
-              onChange={textChangeHandler}
-              placeholder="메시지를 입력하세요."/>
-            <input type="submit" value="보내기"/>
-          </form>
-        </>)
-      }
-    </div>
+    <Suspense fallback={<>Loading...</>}>
+      <Navbar user={appstate.user}/>
+      <Routes>
+        <Route path ="/" element={<LandingPage />} />
+        <Route path="/signup" element={
+          <AuthRoute Component={SignupPage} user={appstate.user} reverse={true}/>
+        }/>
+        <Route path="/signin" element={
+          <AuthRoute Component={SigninPage} user={appstate.user} reverse={true}/>
+        }/>
+        <Route path="/chat" element={
+          <AuthRoute Component={ChatPage} user={appstate.user} reverse={false}/>
+        }/>
+      </Routes>
+    </Suspense>
   );
 };
 

@@ -8,9 +8,9 @@ const {tokenKey, tokenExp} = CookieConfig()
 class Controller {
     auth = (req: Request, res: Response) => {
         return res.status(200).json({
-            name: req.user?.name,
-            email: req.user?.email,
-            role: req.user?.role,
+            name: req.user?.name ? req.user?.name : '',
+            email: req.user?.email ? req.user?.email : '',
+            role: req.user?.role ? req.user?.role : false,
             auth: true
         });
     };
