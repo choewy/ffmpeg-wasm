@@ -7,7 +7,7 @@ AppRouter.get('*', (req: Request, res: Response)=>{
     console.log(`=========================`);
     console.log(`====       GET *     ====`);
     console.log(`=========================`);
-    res.sendFile(__dirname + '/build/index.html');
+    return res.sendFile('/build/index.html');
 });
 
 export const AppRoutes = (app: App, mode: string|undefined) => {
