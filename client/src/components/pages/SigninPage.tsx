@@ -1,5 +1,4 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { userSigninAction } from "../../actions/user.actions";
 
 const InputProps = {
@@ -15,8 +14,12 @@ const InputProps = {
     }
 };
 
-const SigninPage:React.FC = () => {
-    const navigate = useNavigate();
+interface SigninPageProps {
+    userAuthCheck: Function
+};
+
+const SigninPage:React.FC<SigninPageProps> = (props) => {
+    const {userAuthCheck} = props;
     const [formState, setFormState] = useState({
         email: '',
         password: ''
@@ -37,7 +40,7 @@ const SigninPage:React.FC = () => {
         const signinBody = {email, password};
         const {ok, message} = await userSigninAction(signinBody);
         if (!ok) return alert(message);
-        return navigate('/');
+        return await userAuthCheck();
     };
 
     return (

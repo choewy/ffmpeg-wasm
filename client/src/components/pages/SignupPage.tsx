@@ -1,6 +1,9 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { userSignupAction } from "../../actions/user.actions";
+
+interface SignupPageProps {
+    userAuthCheck: Function
+};
 
 const InputProps = {
     name: {
@@ -25,8 +28,8 @@ const InputProps = {
     }
 };
 
-const SignupPage:React.FC = () => {
-    const navigate = useNavigate();
+const SignupPage:React.FC<SignupPageProps> = (props) => {
+    const {userAuthCheck} = props;
     const [formState, setFormState] = useState({
         name: '',
         email: '',
@@ -52,7 +55,7 @@ const SignupPage:React.FC = () => {
         const signupBody = {name, email, password};
         const {ok, message} = await userSignupAction(signupBody);
         if (!ok) return alert(message);
-        return navigate('/');
+        return await userAuthCheck();
     };
 
     return (
