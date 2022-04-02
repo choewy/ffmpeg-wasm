@@ -50,7 +50,7 @@ interface SomeThing {
 };
 
 function join(name: string, count: string): string;
-function join(name:string, count:number): SomeThing;
+function join(name: string, count: number): SomeThing;
 function join (name: string, count: number | string): SomeThing | string {
     if (typeof count === 'number') {
         return {
