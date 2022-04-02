@@ -33,6 +33,6 @@ let myLanguage: Languages;
 myLanguage = Languages.JavaScript;
 myLanguage = Languages.TypeScript;
 
-// custom Type
+// literal Type
 type CustomType = 'male' | 'femail';
 const gender: CustomType = 'male';
