@@ -1,4 +1,4 @@
-# TypeScript Lecture
+# TypeScript 기초 문법
 
 - TypeScript 설치
 
@@ -33,3 +33,7 @@ $ npx tsc --init
 ```
 $ tsc
 ```
+
+# 의존성 주입과 역전, 제어권 역전
+
+- [GitBook 기술블로그](https://choewy.github.io/gitbook/node.js/7)
