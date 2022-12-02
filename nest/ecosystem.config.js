@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'nest',
       script: 'dist/main.js',
-      instances: 'max',
+      instances: '2',
       wait_ready: true,
       watch: true,
       listen_timeout: 10000,
