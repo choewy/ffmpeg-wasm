@@ -6,8 +6,8 @@ import { YoutubeService } from './core';
 export class AppController implements OnApplicationBootstrap {
   constructor(private readonly youtubeService: YoutubeService) {}
 
-  onApplicationBootstrap() {
-    this.youtubeService.upload({
+  async onApplicationBootstrap() {
+    return this.youtubeService.upload({
       title: `${Date.now()}`,
       description: 'TEST',
       path: './assets/output.mp4',
