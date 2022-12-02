@@ -1,10 +1,9 @@
-import { Logger, Module } from '@nestjs/common';
-import { FFmpegService } from './service';
-import { AppService } from './app.service';
+import { Module } from '@nestjs/common';
+import { CoreModule } from './core';
 import { AppController } from './app.controller';
 
 @Module({
-  providers: [Logger, FFmpegService, AppService],
+  imports: [CoreModule],
   controllers: [AppController],
 })
 export class AppModule {}

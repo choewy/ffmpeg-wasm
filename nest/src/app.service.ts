@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { FFmpegService } from './service';
+import { FFmpegService } from './core';
 
 @Injectable()
 export class AppService {
