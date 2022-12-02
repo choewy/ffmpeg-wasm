@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { fetchFile } from '@ffmpeg/ffmpeg';
-import { m3u8Service, ffmpegService } from './service';
+import { ffmpegService } from './service';
 
 export const App = () => {
   const [videoSrc, setVideoSrc] = useState<string>('');
@@ -10,14 +10,19 @@ export const App = () => {
     setMessage('Loading');
     await ffmpegService.init();
 
-    setMessage('Start');
-    const file = (await m3u8Service.download()) as unknown as string;
-    await ffmpegService.write('test.m3u8', await fetchFile(file));
+    setMessage('Get TS files');
+    await ffmpegService.write(
+      'all.ts',
+      await fetchFile('http://localhost:30001/ts'),
+    );
+
+    setMessage('Concat');
 
     try {
+      setMessage('Start');
       await ffmpegService.run(
         '-i',
-        'test.m3u8',
+        'all.ts',
         '-bsf:a',
         'aac_adtstoasc',
         '-vcodec',
@@ -27,12 +32,11 @@ export const App = () => {
         '-crf',
         '50',
         '-t',
-        '5',
-        'test.mp4',
+        '60',
+        'temp.mp4',
       );
-
       setMessage('Complete');
-      const mp4Buffer = await ffmpegService.read('test.mp4');
+      const mp4Buffer = await ffmpegService.read('temp.mp4');
       const mp4Src = await ffmpegService.toMp4Src(mp4Buffer);
       setVideoSrc(mp4Src);
     } catch (e) {
