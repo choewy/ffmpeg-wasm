@@ -6,7 +6,7 @@ const fileRouter: RouterFunction = () => {
   const router = Router();
 
   router.get('/', (_, res) => {
-    return res.download('./temp/concat.ts');
+    return res.download('./temp/20221204164523/concat.ts');
   });
 
   return [prefix, router];
