@@ -1,3 +1,4 @@
+/** @memo - for development react*/
 module.exports = (app) => {
   app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
