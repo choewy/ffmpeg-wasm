@@ -45,6 +45,8 @@ export const useMp4Transcode = (): [string, string, () => Promise<void>] => {
           }),
         ),
       );
+
+      setMessage('Complete');
     } catch (e) {
       setMessage(`Error : ${e}`);
     }
